@@ -17,7 +17,8 @@ import (
 
 func main() {
 	// ── Database ──────────────────────────────────────────────────────────────
-	db, err := database.NewPostgresDB()
+	// NewDB reads DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME from env.
+	db, err := database.NewDB()
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
