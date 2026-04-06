@@ -17,16 +17,20 @@ import (
 
 func main() {
 	// ── Database ──────────────────────────────────────────────────────────────
-	// NewDB reads DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME from env.
+	// Reads DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME from environment.
 	db, err := database.NewDB()
 	if err != nil {
-		log.Fatalf("failed to connect to database: %v", err)
+		log.Fatalf("startup: database connection failed: %v", err)
 	}
+	log.Println("startup: database connected ✓")
 
 	// ── Auto-migrate models ───────────────────────────────────────────────────
+	// Runs on every startup — creates/updates tables for:
+	// User, Coach, Availability, Booking, Appointment
 	if err := database.Migrate(db); err != nil {
-		log.Fatalf("database migration failed: %v", err)
+		log.Fatalf("startup: migration failed: %v", err)
 	}
+	log.Println("startup: migrations applied ✓")
 
 	// ── Wire dependencies ─────────────────────────────────────────────────────
 	appointmentRepo := repositories.NewAppointmentRepository(db)
