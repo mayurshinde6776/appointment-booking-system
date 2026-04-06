@@ -10,6 +10,8 @@ import (
 func SetupRouter(
 	health *HealthHandler,
 	appointment *AppointmentHandler,
+	availability *AvailabilityHandler,
+	user *UserHandler,
 ) *gin.Engine {
 	r := gin.New()
 
@@ -39,6 +41,17 @@ func SetupRouter(
 			appointments.GET("/:id", appointment.GetByID)
 			appointments.PUT("/:id", appointment.Update)
 			appointments.DELETE("/:id", appointment.Delete)
+		}
+
+		coaches := v1.Group("/coaches")
+		{
+			coaches.POST("/availability", availability.SetAvailability)
+		}
+
+		users := v1.Group("/users")
+		{
+			users.GET("/slots", user.GetAvailableSlots)
+			users.POST("/bookings", user.CreateBooking)
 		}
 	}
 

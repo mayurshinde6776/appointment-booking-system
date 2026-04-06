@@ -37,10 +37,20 @@ func main() {
 	appointmentSvc := services.NewAppointmentService(appointmentRepo)
 	appointmentHandler := handlers.NewAppointmentHandler(appointmentSvc)
 
+	availabilityRepo := repositories.NewAvailabilityRepository(db)
+	availabilitySvc := services.NewAvailabilityService(availabilityRepo)
+	availabilityHandler := handlers.NewAvailabilityHandler(availabilitySvc)
+
+	bookingRepo := repositories.NewBookingRepository(db)
+	slotSvc := services.NewSlotService(availabilityRepo, bookingRepo)
+	
+	bookingSvc := services.NewBookingService(bookingRepo, slotSvc)
+	userHandler := handlers.NewUserHandler(slotSvc, bookingSvc)
+
 	healthHandler := handlers.NewHealthHandler(db)
 
 	// ── Router ────────────────────────────────────────────────────────────────
-	router := handlers.SetupRouter(healthHandler, appointmentHandler)
+	router := handlers.SetupRouter(healthHandler, appointmentHandler, availabilityHandler, userHandler)
 
 	// ── HTTP server ───────────────────────────────────────────────────────────
 	port := os.Getenv("PORT")
